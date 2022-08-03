@@ -13,6 +13,12 @@
 const int LED_PIN = 44;
 const int IR_RECEIVE_PIN = 46;
 
+void flashLed() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(250);
+  digitalWrite(LED_PIN, LOW);
+}
+
 void setup() {
   Serial.begin(9600);
   IrReceiver.begin(IR_RECEIVE_PIN, false);
@@ -33,9 +39,7 @@ void loop() {
       hasNewCommand = 1;
     }
     //Serial.println(recv_command);
-    digitalWrite(LED_PIN, HIGH);
-    delay(250);
-    digitalWrite(LED_PIN, LOW);
+    flashLed();
     IrReceiver.resume();
   }
 
@@ -43,15 +47,15 @@ void loop() {
   if (hasNewCommand == 1) {
     hasNewCommand = 0;
     
-    if (recv_command == 0x45 && power_state == 0) {
+    if (IrReceiver.decodedIRData.command == 0x45 && power_state == 0) {
       power_state = 1;
       Serial.println("Power on");
-    } else if (recv_command == 0x45 && power_state == 1) {
+    } else if (IrReceiver.decodedIRData.command == 0x45 && power_state == 1) {
       power_state = 0;
       Serial.println("Power off");
     }
    
-    if (recv_command == 0x46) {
+    if (IrReceiver.decodedIRData.command == 0x46) {
       Serial.println("Volume up");
     }
   }
