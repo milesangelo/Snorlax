@@ -35,16 +35,7 @@ int power_state = 0;
 int hasNewCommand = 0;
 
 void loop() {
-  
-  if (IrReceiver.decode()) {
-    if (IrReceiver.decodedIRData.command > 0) {
-      hasNewCommand = 1;
-    }
-    flashLed();
-    IrReceiver.resume();
-  }
-
-  if (hasNewCommand == 1) {    
+  if (IrReceiver.decode() && IrReceiver.decodedIRData.command > 0) {
     switch (IrReceiver.decodedIRData.command) {
       case POWER_BUTTON:
       {
@@ -79,8 +70,9 @@ void loop() {
       }
       default:
         break;
-    }
     
-    hasNewCommand = 0;
+    }
+    flashLed();
+    IrReceiver.resume();
   }
 }
